@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8">
+
+		<title>MMORPG - Game of Thrones</title>
+		
+		<!-- JQuery -->
+		<script src="js/jquery-2.2.1.js"></script>
+
+		<!-- bootstrap - link cdn -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	
+		<!-- incluindo css -->
+		<link href="css/style.css" rel="stylesheet">
+
+	</head>
+
+	<script>
+		$(document).ready(function () {
+			$("#btn_suditos").on("click", function () {
+				$("#erros").hide();
+				$.ajax({
+					url: "/suditos",
+					method: "GET",
+					success: function (data) {
+						$("#acoes").html(data);
+					}
+				});
+			});
+
+			$("#btn_pergaminho").on("click", function () {
+				$("#erros").hide();
+				$.ajax({
+					url: "/pergaminhos",
+					method: "GET",
+					success: function (data) {
+						$("#acoes").html(data);
+						clearTimeout(timeoutId);
+						cronometro();
+					}
+				});
+			});
+		});
+
+		var timeoutId = null;
+		function cronometro() {
+			$('.tempo_restante').each(function () {
+				var segundos_atuais = parseInt($(this).html()) - 1;
+				if (segundos_atuais < 1) {
+					window.location.href = "/jogo?invalido=3"
+				}
+				$(this).html(segundos_atuais);
+			});
+
+			timeoutId = setTimeout('cronometro()', 1000);
+		}
+	</script>
+
+	<body class="body-jogo">
+
+		<nav class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<div class="form-group sair">
+					<a href="/sair"><button class="btn btn-info pull-right">Sair</button></a>
+				</div>
+			</div>
+		</nav>
+
+	    <div class="container">
+			<% if (invalido == "0") { %>
+				<div class="alert alert-info" id="erros">
+					<strong>Ola <%= jogo.usuario %>!</strong>
+				</div>
+			<% } %>
+			<% if (invalido == "1") { %>
+				<div class="alert alert-danger" id="erros">
+					<strong>Preencha todos os campos!</strong>
+				</div>
+			<% } %>
+			<% if (invalido == "2") { %>
+				<div class="alert alert-success" id="erros">
+					<strong>Ação realizada com sucesso!	</strong>
+				</div>
+			<% } %>
+			<% if (invalido == "3") { %>
+				<div class="alert alert-info" id="erros">
+					<strong>Ação foi terminada!	</strong>
+				</div>
+			<% } %>
+			<div class="row">
+	    		<div class="col-sm-3 casa">
+					<img src="images/casa_<%= img_casa %>.jpg" />
+				</div>
+
+	    		<div class="col-sm-9">
+					<div class="row barra-superior">
+						<div class="col-sm-2"> 
+							<img src="images/habilidades/temor.jpg" title="Temor" alt="Temor" />
+							<span><%= jogo.temor %></span>
+						</div>
+						
+						<div class="col-sm-2"> 
+							<img src="images/habilidades/sabedoria.jpg" title="Sabedoria" alt="Sabedoria"/>
+							<span><%= jogo.sabedoria %></span>
+						</div>
+						
+						<div class="col-sm-2"> 
+							<img src="images/habilidades/comercio.jpg" title="Comércio" alt="Comércio"/>
+							<span><%= jogo.comercio %></span>
+						</div>
+						
+						<div class="col-sm-2"> 
+							<img src="images/habilidades/magia.jpg" title="Magia" alt="Magia"/>
+							<span><%= jogo.magia %></span>
+						</div>
+					</div>
+				</div>
+	    	</div>
+			
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-9">
+					<div class="acoes" id="acoes"></div>					
+				</div>
+			</div>
+			
+		</div>	
+		
+		<div class="barra-inferior">
+			<div class="container">
+			
+				<div class="row">
+					<div class="col-sm-1">
+						<img style="cursor: pointer" src="images/outros/suditos.jpg" title="Aldeões" alt="Aldeões" id="btn_suditos"/>
+						<span><%= jogo.suditos %></span>
+					</div>
+					
+					<div class="col-sm-1">
+						<img style="cursor: pointer" src="images/outros/pergaminho.jpg" title="Pergaminhos" alt="Pergaminhos" id="btn_pergaminho"/>
+					</div>
+					
+					<div class="col-sm-8"></div>
+					
+					<div class="col-sm-2">
+						<img src="images/outros/moeda.jpg" title="Moeda" alt="Moeda"/>
+						<span><%= jogo.moeda %></span>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
